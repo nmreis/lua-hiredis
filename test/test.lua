@@ -213,7 +213,7 @@ local t = assert(conn:command("EXEC"))
 assert(t[1] == hiredis.status.OK)
 assert(t[2].type == hiredis.REPLY_ERROR)
 assert(
-    t[2].name == "ERR Operation against a key holding the wrong kind of value"
+    t[2].name == "WRONGTYPE Operation against a key holding the wrong kind of value"
   )
 assert(t[3] == 2)
 
@@ -234,7 +234,7 @@ local t = assert(conn:get_reply()) -- EXEC
 assert(t[1] == hiredis.status.OK)
 assert(t[2].type == hiredis.REPLY_ERROR)
 assert(
-    t[2].name == "ERR Operation against a key holding the wrong kind of value"
+    t[2].name == "WRONGTYPE Operation against a key holding the wrong kind of value"
   )
 assert(t[3] == 2)
 

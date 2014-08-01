@@ -22,6 +22,7 @@ extern "C" {
   #define SPAM(a) (void)0
 #endif
 
+#define LUA_COMPAT_MODULE
 #define LUAHIREDIS_VERSION     "lua-hiredis 0.2.1"
 #define LUAHIREDIS_COPYRIGHT   "Copyright (C) 2011—2013, lua-hiredis authors"
 #define LUAHIREDIS_DESCRIPTION "Bindings for hiredis Redis-client library"
@@ -50,7 +51,7 @@ static void reg_enum(lua_State * L, const luahiredis_Enum * e)
   }
 }
 
-/* This is luaL_setfuncs() from Lua 5.2 alpha */
+/* This is luaL_register() from Lua 5.2 alpha */
 static void setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   luaL_checkstack(L, nup, "too many upvalues");
   for (; l && l->name; l++) {  /* fill the table with given functions */
@@ -62,7 +63,7 @@ static void setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   }
   lua_pop(L, nup);  /* remove upvalues */
 }
-/* End of luaL_setfuncs() from Lua 5.2 alpha */
+/* End of luaL_register() from Lua 5.2 alpha */
 
 static int lconst_tostring(lua_State * L)
 {
@@ -103,7 +104,7 @@ static int push_new_const(
 
   if (luaL_newmetatable(L, LUAHIREDIS_CONST_MT))
   {
-    luaL_register(L, NULL, CONST_MT);
+    luaL_setfuncs(L, CONST_MT, 0);
     lua_pushvalue(L, -1);
     lua_setfield(L, -2, "__index");
     lua_pushliteral(L, LUAHIREDIS_CONST_MT);
@@ -596,7 +597,10 @@ LUALIB_API int luaopen_hiredis(lua_State * L)
   /*
   * Register module
   */
-  luaL_register(L, "hiredis", E);
+  lua_newtable(L);
+  luaL_setfuncs (L, E, 0);
+  lua_pushvalue(L, -1);
+  lua_setglobal(L,"hiredis");
 
   /*
   * Register module information
@@ -626,7 +630,7 @@ LUALIB_API int luaopen_hiredis(lua_State * L)
 
   if (luaL_newmetatable(L, LUAHIREDIS_STATUS_MT))
   {
-    luaL_register(L, NULL, STATUS_MT);
+    luaL_setfuncs(L, STATUS_MT, 0);
     lua_pushliteral(L, LUAHIREDIS_STATUS_MT);
     lua_setfield(L, -2, "__metatable");
   }
