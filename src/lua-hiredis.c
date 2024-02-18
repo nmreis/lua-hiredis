@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-#include <lua.h>
-#include <lauxlib.h>
+#include <lua5.3/lua.h>
+#include <lua5.3/lauxlib.h>
 
 #if defined (__cplusplus)
 }
@@ -446,7 +446,7 @@ static int lhiredis_connect(lua_State * L)
   }
   else
   {
-    pContext = redisConnect(host_or_socket, luaL_checkint(L, 2));
+    pContext = redisConnect(host_or_socket, (int)luaL_checkinteger(L, 2));
   }
 
   if (!pContext)
